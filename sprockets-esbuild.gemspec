@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.version     = SprocketsEsbuild::VERSION
   spec.authors     = [ "Sam Ruby" ]
   spec.email       = "rubys@intertwingly.net"
-  spec.homepage    = "https://github.com/rails/tailwindcss-rails"
+  spec.homepage    = "https://github.com/rubys/sprockets-esbuild"
   spec.summary     = "Transpile JSX, TS, and TSX files with esbuild."
   spec.license     = "MIT"
 
