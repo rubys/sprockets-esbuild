@@ -4,8 +4,8 @@
 #
 #  TL;DR: run "rake package"
 #
-#  The native platform gems (defined by ESBUILD_NATIVE_PLATFORMS below) will each contain two
-#  files in addition to what the vanilla ruby gem contains:
+#  The native platform gems (defined by SprocketsEsbuild::Upstream::NATIVE_PLATFORMS)
+#  will each contain two files in addition to what the vanilla ruby gem contains:
 #
 #     exe/
 #     ├── esbuild                                 #  generic ruby script to find and run the binary
@@ -56,19 +56,10 @@
 #
 require "rubygems/package_task"
 require "open-uri"
-
-ESBUILD_VERSION = "0.14.5" # string used to generate the download URL
-
-# rubygems platform name => upstream release filename
-ESBUILD_NATIVE_PLATFORMS = {
-  "arm64-darwin" => "esbuild-darwin-arm64",
-  "x64-mingw32" => "esbuild-windows-64",
-  "x86_64-darwin" => "esbuild-darwin-64",
-  "x86_64-linux" => "esbuild-linux-64",
-}
+require_relative "../lib/sprockets-esbuild/upstream"
 
 def esbuild_download_url(filename)
-  "https://registry.npmjs.org/#{filename}/-/#{filename}-#{ESBUILD_VERSION}.tgz"
+  "https://registry.npmjs.org/#{filename}/-/#{filename}-#{SprocketsEsbuild::Upstream::VERSION}.tgz"
 end
 
 ESBUILD_RAILS_GEMSPEC = Bundler.load_gemspec("sprockets-esbuild.gemspec")
@@ -78,7 +69,7 @@ desc "Build the ruby gem"
 task "gem:ruby" => [gem_path]
 
 exepaths = []
-ESBUILD_NATIVE_PLATFORMS.each do |platform, filename|
+SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.each do |platform, filename|
   ESBUILD_RAILS_GEMSPEC.dup.tap do |gemspec|
     exedir = File.join(gemspec.bindir, platform) # "exe/x86_64-linux"
     exepath = File.join(exedir, "esbuild") # "exe/x86_64-linux/esbuild"
@@ -86,7 +77,6 @@ ESBUILD_NATIVE_PLATFORMS.each do |platform, filename|
 
     # modify a copy of the gemspec to include the native executable
     gemspec.platform = platform
-    gemspec.executables << "esbuild"
     gemspec.files += [exepath, "LICENSE-DEPENDENCIES"]
 
     # create a package task

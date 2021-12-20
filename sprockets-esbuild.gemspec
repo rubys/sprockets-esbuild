@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
   spec.bindir = "exe"
+  spec.executables << "esbuild"
 
   spec.add_dependency "sprockets"
 end
