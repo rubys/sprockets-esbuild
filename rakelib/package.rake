@@ -69,7 +69,9 @@ desc "Build the ruby gem"
 task "gem:ruby" => [gem_path]
 
 exepaths = []
-SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.each do |platform, filename|
+SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.each do |platform, filenames|
+  filename = filenames.first
+  tarpath = filenames.last
   ESBUILD_RAILS_GEMSPEC.dup.tap do |gemspec|
     exedir = File.join(gemspec.bindir, platform) # "exe/x86_64-linux"
     exepath = File.join(exedir, "esbuild") # "exe/x86_64-linux/esbuild"
@@ -96,8 +98,8 @@ SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.each do |platform, filename|
         end
       end
 
-      sh "tar xzf #{exepath}.tgz package/bin/esbuild"
-      mv 'package/bin/esbuild', exepath
+      sh "tar xzf #{exepath}.tgz #{tarpath}"
+      mv tarpath, exepath
       rm_rf "#{exepath}.tgz"
       rm_rf 'package'
       FileUtils.chmod(0755, exepath, verbose: true)
