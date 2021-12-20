@@ -1,5 +1,14 @@
 name: Native Gems
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - '*'
+
 jobs:
   package:
     strategy:
