@@ -5,10 +5,11 @@ require "shellwords"
 require "sprockets-esbuild/upstream"
 
 supported_platforms = SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.keys
+platform = [:cpu, :os].map { |m| Gem::Platform.local.send(m) }.join("-")
 
 if supported_platforms.none? { |supported_platform| Gem::Platform.match(supported_platform) }
   STDERR.puts(<<~ERRMSG)
-    ERROR: sprockets-esbuild does not support the #{::Gem::Platform.local} platform
+    ERROR: sprockets-esbuild does not support the #{platform} platform
   ERRMSG
   exit 1
 end
@@ -18,7 +19,7 @@ exe_path = Dir.glob(File.join(__dir__, "*", "esbuild")).find do |f|
 end
 if exe_path.nil?
   STDERR.puts(<<~ERRMSG)
-    ERROR: Cannot find the esbuild executable for #{::Gem::Platform.local} in #{__dir__}
+    ERROR: Cannot find the esbuild executable for #{platform} in #{__dir__}
     If you're using bundler, please make sure you're on the latest bundler version:
 
       gem install bundler
@@ -26,7 +27,7 @@ if exe_path.nil?
 
     Then make sure your lock file includes this platform by running:
 
-      bundle lock --add-platform #{::Gem::Platform.local}
+      bundle lock --add-platform #{platform}
       bundle install
 
     See `bundle lock --help` output for details.
