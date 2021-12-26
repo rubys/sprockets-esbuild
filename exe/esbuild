@@ -1,7 +1,6 @@
 #! /usr/bin/env ruby
 # because rubygems shims assume a gem's executables are Ruby
 
-require "shellwords"
 require "sprockets-esbuild/upstream"
 
 supported_platforms = SprocketsEsbuild::Upstream::NATIVE_PLATFORMS.keys
@@ -35,5 +34,4 @@ if exe_path.nil?
   exit 1
 end
 
-command = Shellwords.join([exe_path, ARGV].flatten)
-exec(command)
+system exe_path, *ARGV
