@@ -3,7 +3,10 @@ require_relative "lib/sprockets-esbuild/version"
 Gem::Specification.new do |spec|
   spec.name        = "sprockets-esbuild"
   spec.version     = SprocketsEsbuild::VERSION
-  spec.authors     = [ "Sam Ruby" ]
+  spec.authors     = [ 
+    "Sam Ruby",
+    "Mike Dalessio"
+  ]
   spec.email       = "rubys@intertwingly.net"
   spec.homepage    = "https://github.com/rubys/sprockets-esbuild"
   spec.summary     = "Transpile JSX, TS, and TSX files with esbuild."
