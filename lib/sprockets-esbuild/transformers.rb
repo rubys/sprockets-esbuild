@@ -9,7 +9,11 @@ module SprocketsEsbuild
   class TransformerBase
     include Sprockets
 
-    ESBUILD = File.expand_path('../../exe/esbuild', __dir__)
+    ESBUILD = [File.expand_path('../../exe/esbuild', __dir__)]
+
+    # As windows doesn't support she-bang syntax in scripts, prepend Ruby to
+    # the command
+    ESBUILD.unshift RbConfig.ruby if Gem.win_platform?
 
     def cache_key
       @cache_key ||= "#{self.class.name}::#{VERSION}".freeze
@@ -20,15 +24,15 @@ module SprocketsEsbuild
 
       input[:cache].fetch([cache_key, data]) do
 
-	out, err, status = Open3.capture3(ESBUILD, '--sourcemap',
-	  "--sourcefile=#{input[:filename]}", "--loader=#{loader}",
-	  stdin_data: input[:data])
+        out, err, status = Open3.capture3(*ESBUILD, '--sourcemap',
+          "--sourcefile=#{input[:filename]}", "--loader=#{loader}",
+          stdin_data: input[:data])
 
-	if status.success? and err.empty?
-	  out
-	else
-	  raise Error, "esbuild exit status=#{status.exitstatus}\n#{err}"
-	end
+        if status.success? and err.empty?
+          out
+        else
+          raise Error, "esbuild exit status=#{status.exitstatus}\n#{err}"
+        end
       end
     end
   end

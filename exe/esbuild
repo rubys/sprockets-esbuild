@@ -34,4 +34,11 @@ if exe_path.nil?
   exit 1
 end
 
-system exe_path, *ARGV
+if Gem.win_platform?
+  # use system rather than exec as exec inexplicably fails to find the executable
+  # on Windows
+  system exe_path, *ARGV
+else
+  # use exec rather than system to avoid creating a new process
+  exec exe_path, *ARGV
+end
