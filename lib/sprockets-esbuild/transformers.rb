@@ -3,6 +3,10 @@
 
 require 'open3'
 require 'sprockets'
+require 'sprockets/source_map_utils'
+require 'json'
+require 'base64'
+require 'pathname'
 
 module SprocketsEsbuild
 
@@ -28,8 +32,24 @@ module SprocketsEsbuild
           "--sourcefile=#{input[:filename]}", "--loader=#{loader}",
           stdin_data: input[:data])
 
+        match = out.match %r{^//# sourceMappingURL=data:application/json;base64,(.*)\s*}
+
+        if match
+          # extract sourcemap from output and then format and combine it
+          out[match.begin(0)..match.end(0)] = ''
+          map = JSON.parse(Base64.decode64(match[1]))
+          map = SourceMapUtils.format_source_map(map, input)
+          map = SourceMapUtils.combine_source_maps(input[:metadata][:map], map)
+        else
+          map = nil
+        end
+
         if status.success? and err.empty?
-          out
+          if map
+            { data: out, map: map }
+          else
+            out
+          end
         else
           raise Error, "esbuild exit status=#{status.exitstatus}\n#{err}"
         end
