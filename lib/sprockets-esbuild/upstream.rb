@@ -1,7 +1,7 @@
 module SprocketsEsbuild
   # constants describing the upstream esbuild project
   module Upstream
-    VERSION = "0.14.5"
+    VERSION = "0.19.5"
 
     # rubygems platform name => [upstream release tarball name, tarball path]
     NATIVE_PLATFORMS = {
